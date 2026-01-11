@@ -29,7 +29,7 @@ public class Shape2D
         return Math.Abs(area) / 2.0f;
     }
 
-    // Główna logika cięcia linią zdefiniowaną przez dwa punkty.
+    /*
     public List<Shape2D> Split(Vector2 p1, Vector2 p2)
     {
         List<Vector2> leftSide = new List<Vector2>();
@@ -59,13 +59,51 @@ public class Shape2D
         if (leftSide.Count < 3 || rightSide.Count < 3)
             return new List<Shape2D> { this };
 
-        // Zwracamy dwie nowe części (później dodamy tu obsługę wklęsłości)
+        // Zwracamy dwie nowe części 
         return new List<Shape2D> 
         { 
             new Shape2D(SortVertices(leftSide), Color), 
             new Shape2D(SortVertices(rightSide), Color) 
         };
+    }*/
+
+    // Nowy split do wkleslych - Sutherland-Hodgman
+    public List<Shape2D> Split(Vector2 p1, Vector2 p2)
+    {
+        List<Vector2> part1 = new List<Vector2>();
+        List<Vector2> part2 = new List<Vector2>();
+
+        for (int i = 0; i < Vertices.Count; i++)
+        {
+            Vector2 current = Vertices[i];
+            Vector2 next = Vertices[(i + 1) % Vertices.Count];
+
+            float sideCurrent = GetSide(p1, p2, current);
+            float sideNext = GetSide(p1, p2, next);
+
+            if (sideCurrent >= 0) part1.Add(current);
+            if (sideCurrent <= 0) part2.Add(current);
+
+            // Sprawdzenie przecięcia krawędzi z linią cięcia
+            if (sideCurrent * sideNext < 0)
+            {
+                Vector2 intersection = GetIntersection(p1, p2, current, next);
+                part1.Add(intersection);
+                part2.Add(intersection);
+            }
+        }
+
+        // nie ma trojkatow, nie ma ciecia
+        if (part1.Count < 3 || part2.Count < 3)
+            return new List<Shape2D> { this };
+
+        return new List<Shape2D> 
+        { 
+            new Shape2D(part1, Color), 
+            new Shape2D(part2, Color) 
+        };
     }
+
 
     private float GetSide(Vector2 p1, Vector2 p2, Vector2 v)
     {
@@ -101,4 +139,56 @@ public class Shape2D
         float y = Vertices.Average(v => v.Y);
         return new Vector2(x, y);
     }
+
+    public List<Vector2[]> GetTriangles()
+    {
+        List<Vector2[]> triangles = new List<Vector2[]>();
+        List<Vector2> verts = new List<Vector2>(Vertices);
+
+        // Algorytm Ear Clipping 
+        while (verts.Count >= 3)
+        {
+            bool earFound = false;
+            for (int i = 0; i < verts.Count; i++)
+            {
+                int prev = (i == 0) ? verts.Count - 1 : i - 1;
+                int next = (i == verts.Count - 1) ? 0 : i + 1;
+
+                if (IsEar(verts[prev], verts[i], verts[next], verts))
+                {
+                    triangles.Add(new Vector2[] { verts[prev], verts[i], verts[next] });
+                    verts.RemoveAt(i);
+                    earFound = true;
+                    break;
+                }
+            }
+            if (!earFound) break; // infinity loop break
+        }
+        return triangles;
+    }
+
+    // Czy moge uciac uszko wielokącikowi :3
+    private bool IsEar(Vector2 a, Vector2 b, Vector2 c, List<Vector2> allVerts)
+    {
+        // Czy wypukły
+        if (GetSide(a, c, b) >= 0) return false;
+
+        // Czy jakikolwiek inny punkt leży wewnątrz tego trójkąta?
+        for (int i = 0; i < allVerts.Count; i++)
+        {
+            Vector2 p = allVerts[i];
+            if (p == a || p == b || p == c) continue;
+            if (IsPointInTriangle(p, a, b, c)) return false;
+        }
+        return true;
+    }
+
+    private bool IsPointInTriangle(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
+    {
+        float d1 = GetSide(a, b, p);
+        float d2 = GetSide(b, c, p);
+        float d3 = GetSide(c, a, p);
+        return (d1 < 0 && d2 < 0 && d3 < 0) || (d1 > 0 && d2 > 0 && d3 > 0);
+    }
+
 }

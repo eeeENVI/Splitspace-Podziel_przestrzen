@@ -39,6 +39,20 @@ public static class ShapeRenderer
         }
     }
 
+    public static void DrawShapeFilled(SpriteBatch spriteBatch, Shape2D shape)
+    {
+        CreatePixel(spriteBatch.GraphicsDevice);
+        var triangles = shape.GetTriangles();
+
+        foreach (var tri in triangles)
+        {
+            // przypomnienie dla mnie bym basiceffect w mono ogarnal
+            DrawLine(spriteBatch, tri[0], tri[1], shape.Color * 0.5f, 1);
+            DrawLine(spriteBatch, tri[1], tri[2], shape.Color * 0.5f, 1);
+            DrawLine(spriteBatch, tri[2], tri[0], shape.Color * 0.5f, 1);
+        }
+    }
+
     public static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, int thickness)
     {
         CreatePixel(spriteBatch.GraphicsDevice);
