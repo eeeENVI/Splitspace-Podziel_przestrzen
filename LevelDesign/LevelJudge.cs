@@ -7,37 +7,50 @@ using Splitspace_Podziel_przestrzen.Core;
 namespace Splitspace_Podziel_przestrzen.LevelDesign;
 public static class LevelJudge
 {
-    public static ScoreResult EvaluateSplit(float targetPerc, List<Shape2D> shapes, float totalArea, float tolerance)
+    public static ScoreResult EvaluateSplit(List<float> targetPercentages, List<Shape2D> shapes, float totalArea, float tolerance)
     {
-        if (shapes.Count < 2) return new ScoreResult { IsPassed = false };
-
-        // Szukamy kawałka, który jest najbliżej celu - narazie testowo 
-        float bestDiff = float.MaxValue;
-        float actualPerc = 0;
-
-        foreach (var shape in shapes)
+        // 1. Sprawdzamy, czy liczba fragmentów na ekranie zgadza się z liczbą celów (N)
+        if (shapes.Count != targetPercentages.Count)
         {
-            float currentPerc = (shape.CalculateArea() / totalArea) * 100f;
-            float diff = Math.Abs(targetPerc - currentPerc);
-            
-            if (diff < bestDiff)
+            return new ScoreResult { IsPassed = false, Accuracy = 0 };
+        }
+
+        // 2. Obliczamy procenty wszystkich aktualnych kawałków i sortujemy malejąco
+        List<float> actualPercs = shapes
+            .Select(s => (s.CalculateArea() / totalArea) * 100f)
+            .OrderByDescending(p => p)
+            .ToList();
+
+        // 3. Sortujemy cele malejąco, aby móc je porównać "jeden do jednego"
+        List<float> sortedTargets = targetPercentages
+            .OrderByDescending(t => t)
+            .ToList();
+
+        float totalError = 0;
+        bool allMatched = true;
+
+        // 4. Porównujemy pary: największy kawałek z największym celem, itd.
+        for (int i = 0; i < sortedTargets.Count; i++)
+        {
+            float diff = Math.Abs(actualPercs[i] - sortedTargets[i]);
+            totalError += diff;
+
+            if (diff > tolerance)
             {
-                bestDiff = diff;
-                actualPerc = currentPerc;
+                allMatched = false;
             }
         }
 
-        bool passed = bestDiff <= tolerance;
+        // Średni błąd na fragment
+        float averageDiff = totalError / sortedTargets.Count;
         
-        // bazowo 100 pkt, odejmujemy punkty za błąd
-        int points = passed ? (int)Math.Max(0, 100 - (bestDiff * 10)) : 0;
-
         return new ScoreResult
         {
-            IsPassed = passed,
-            Accuracy = 100f - bestDiff,
-            Difference = bestDiff,
-            Points = points
+            IsPassed = allMatched,
+            Accuracy = 100f - averageDiff,
+            Difference = averageDiff,
+            // Punkty przyznawane tylko gdy IsPassed jest true
+            Points = allMatched ? (int)Math.Max(0, 100 - (totalError * 5)) : 0
         };
     }
 }

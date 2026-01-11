@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Splitspace_Podziel_przestrzen.Managers;
+using Splitspace_Podziel_przestrzen.Stats;
 
 namespace Splitspace_Podziel_przestrzen.Globals;
 public static class GlobalData
@@ -13,5 +14,5 @@ public static class GlobalData
     public static ContentManager Content { get; set; } 
     public static SpriteBatch SpriteBatch { get; set; }
     public static StateManager StateManager { get; set; }
-
+    public static GameStats GlobalStats; // To co wczytujemy z JSON
 }

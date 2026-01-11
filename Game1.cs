@@ -5,13 +5,12 @@ using Microsoft.Xna.Framework.Input;
 using Splitspace_Podziel_przestrzen.Managers;
 using Splitspace_Podziel_przestrzen.Globals;
 using Splitspace_Podziel_przestrzen.States;
+using Splitspace_Podziel_przestrzen.Stats;
 
 namespace Splitspace_Podziel_przestrzen;
 
 public class Game1 : Game
 {
-
-
     public Game1()
     {
         GlobalData.Graphics = new GraphicsDeviceManager(this);
@@ -40,6 +39,8 @@ public class Game1 : Game
         GlobalData.Content = Content;
 
         // Entry Point
+        GlobalData.GlobalStats = StatsService.Load(); 
+
         GlobalData.StateManager.addState(new MainMenuState());
     }
 

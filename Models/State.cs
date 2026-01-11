@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using System;
+using System.Diagnostics;
 using Splitspace_Podziel_przestrzen.Globals;
 
 namespace Splitspace_Podziel_przestrzen.Models;

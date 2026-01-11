@@ -90,6 +90,16 @@ public static class ShapeRenderer
             0);
     }
 
+    public static void DrawOutline(SpriteBatch spriteBatch, Rectangle rect, int thickness, Color color)
+    {
+        CreatePixel(spriteBatch.GraphicsDevice);
+
+        spriteBatch.Draw(_pixel, new Rectangle(rect.X, rect.Y, rect.Width, thickness), color); 
+        spriteBatch.Draw(_pixel, new Rectangle(rect.X, rect.Bottom - thickness, rect.Width, thickness), color); 
+        spriteBatch.Draw(_pixel, new Rectangle(rect.X, rect.Y, thickness, rect.Height), color);
+        spriteBatch.Draw(_pixel, new Rectangle(rect.Right - thickness, rect.Y, thickness, rect.Height), color); 
+    }
+
     private static (Vector2, Vector2) NormalizeEdge(Vector2 v1, Vector2 v2)
     {
         if (v1.X < v2.X || (v1.X == v2.X && v1.Y < v2.Y))
