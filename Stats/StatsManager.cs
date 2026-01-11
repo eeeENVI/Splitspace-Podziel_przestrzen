@@ -37,7 +37,7 @@ public class GameStats
         
             AverageCutsPerLevel = (float)TotalCutsPerformed / TotalLevelsCompleted;
 
-            WinLossRatio = (float)TotalLevelsCompleted / TotalGamesPlayed;
+            WinLossRatio = ((float)TotalLevelsCompleted / TotalGamesPlayed) * 100;
         }
     }
 }
