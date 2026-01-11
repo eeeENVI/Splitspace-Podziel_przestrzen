@@ -6,8 +6,10 @@ using System;
 using Splitspace_Podziel_przestrzen.Managers;
 using Splitspace_Podziel_przestrzen.Models;
 using Splitspace_Podziel_przestrzen.Gui;
+using Splitspace_Podziel_przestrzen.Globals;
 using Splitspace_Podziel_przestrzen;
 
+namespace Splitspace_Podziel_przestrzen.States;
 public class MainMenuState : State
 {
     Button btn_graj,btn_statystyki,btn_wyjdz;
@@ -22,12 +24,12 @@ public class MainMenuState : State
         font = Content.Load<SpriteFont>("Fonts/testFont");
 
         // Paleta kolorów
-        Color offWhite   = new Color(255, 231, 231); // Bardzo jasny róż/biel
-        Color gold       = new Color(255, 210, 143); // Złoty/żółty
-        Color softRed    = new Color(255, 157, 157); // Pastelowy czerwony
-        Color skyBlue    = new Color(159, 227, 255); // Błękitny
-        Color mintGreen  = new Color(170, 230, 170); // Miętowy
-        Color darkSlate  = new Color(43, 55, 65);   // Ciemny grafit 
+        Color offWhite   = new Color(255, 231, 231); 
+        Color gold       = new Color(255, 210, 143); 
+        Color softRed    = new Color(255, 157, 157); 
+        Color skyBlue    = new Color(159, 227, 255); 
+        Color mintGreen  = new Color(170, 230, 170); 
+        Color darkSlate  = new Color(43, 55, 65);   
 
         // Parametry wspólne
         int buttonWidth = 300;
@@ -74,6 +76,8 @@ public class MainMenuState : State
         if(btn_graj.Clicked())
         {
             Console.WriteLine(btn_graj.Clicked().ToString());
+
+            GlobalData.StateManager.addState(new GameState());
         } 
 
         if(btn_statystyki.Clicked())
