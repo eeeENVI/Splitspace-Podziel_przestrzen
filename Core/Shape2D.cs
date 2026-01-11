@@ -83,7 +83,7 @@ public class Shape2D
         float c2 = a2 * a.X + b2 * a.Y;
 
         float det = a1 * b2 - a2 * b1;
-        // W prawdziwym projekcie warto sprawdzić czy det != 0 (linie równoległe)
+        // NAPEWNO dodac sprawdzenie czy wymair sie nie zapada (det=0)
         return new Vector2((b2 * c1 - b1 * c2) / det, (a1 * c2 - a2 * c1) / det);
     }
 
