@@ -12,6 +12,9 @@ using Splitspace_Podziel_przestrzen.Core;
 using Splitspace_Podziel_przestrzen.LevelDesign;
 using Splitspace_Podziel_przestrzen;
 using Splitspace_Podziel_przestrzen.Stats;
+using System.Net.Quic;
+using System.Data.SqlTypes;
+using System.Security;
 
 //using System.Security.Cryptography; skad tutajto robi XD
 
@@ -163,11 +166,11 @@ public class GameState : State
         if (InputManager.IsKeyPressed(Keys.Left)) _rotation -= rotationSpeed;
         if (InputManager.IsKeyPressed(Keys.Right)) _rotation += rotationSpeed;
 
-
         // Przelaczenie pauzy klawiszem Escape
         if(InputManager.WasKeyTriggered(Keys.Escape)) 
         {
             _pause = !_pause;
+            quit = true;
         }
 
         // Przełączanie trybu debug klawiszem F3

@@ -1,11 +1,11 @@
 {
-  "TotalGamesPlayed": 230,
-  "TotalLevelsCompleted": 33,
-  "TotalTimePlayed": 138.96677,
-  "TotalCutsPerformed": 230,
-  "HighestLevelReached": 15,
-  "WinLossRatio": 0.14347826,
-  "AverageAccuracy": 82.979,
-  "AverageTimePerLevel": 4.211114,
-  "AverageCutsPerLevel": 6.969697
+  "TotalGamesPlayed": 621,
+  "TotalLevelsCompleted": 81,
+  "TotalTimePlayed": 379.33224,
+  "TotalCutsPerformed": 757,
+  "HighestLevelReached": 24,
+  "WinLossRatio": 13.043478,
+  "AverageAccuracy": 79.78968,
+  "AverageTimePerLevel": 4.683114,
+  "AverageCutsPerLevel": 9.345679
 }

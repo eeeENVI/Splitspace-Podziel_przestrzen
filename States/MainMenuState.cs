@@ -76,13 +76,13 @@ public class MainMenuState : State
         if(btn_graj.Clicked())
         {
             Console.WriteLine(btn_graj.Clicked().ToString());
-
             GlobalData.StateManager.addState(new GameState());
         } 
 
         if(btn_statystyki.Clicked())
         {
             Console.WriteLine(btn_statystyki.Clicked().ToString());
+            GlobalData.StateManager.addState(new GlobalStatsState());
         } 
 
         if(btn_wyjdz.Clicked())
