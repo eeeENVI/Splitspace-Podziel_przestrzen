@@ -2,8 +2,11 @@ using System;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Splitspace_Podziel_przestrzen;
+using Splitspace_Podziel_przestrzen.Managers;
+using Splitspace_Podziel_przestrzen.Globals;
 
-namespace Gui
+namespace Splitspace_Podziel_przestrzen.Gui
 {
     public static class GuiManager
     {
@@ -53,7 +56,7 @@ namespace Gui
             this.hover_color =hover_color;
             this.active_color = active_color;
 
-            texture = new Texture2D(Globals.GraphicsDevice,(int)resolution.X,(int)resolution.Y);
+            texture = new Texture2D(GlobalData.GraphicsDevice,(int)resolution.X,(int)resolution.Y);
             Color[] data = new Color[(int)resolution.X*(int)resolution.Y];
             for(int i=0; i < data.Length; ++i) data[i] = Color.White;
             texture.SetData(data);
@@ -125,10 +128,10 @@ namespace Gui
 
         public void Draw()
         {
-            Globals.SpriteBatch.Begin();
-            Globals.SpriteBatch.Draw(texture,rect,mask_color);
-            Globals.SpriteBatch.DrawString(font,text,textPos,text_color);
-            Globals.SpriteBatch.End();
+            GlobalData.SpriteBatch.Begin();
+            GlobalData.SpriteBatch.Draw(texture,rect,mask_color);
+            GlobalData.SpriteBatch.DrawString(font,text,textPos,text_color);
+            GlobalData.SpriteBatch.End();
         }
     }
 }

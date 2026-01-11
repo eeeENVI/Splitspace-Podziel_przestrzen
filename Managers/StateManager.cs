@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Splitspace_Podziel_przestrzen.Models;
 
-namespace States;
+
+namespace Splitspace_Podziel_przestrzen.Managers;
 public class StateManager
 {
     private readonly Stack<State> StatesStack;

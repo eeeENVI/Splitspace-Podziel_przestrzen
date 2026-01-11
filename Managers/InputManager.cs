@@ -18,7 +18,7 @@ using Microsoft.Xna.Framework;
    keep in mind most of the times there will be 1 tick delay 
 </summary*/
 
-namespace Gui;
+namespace Splitspace_Podziel_przestrzen.Managers;
 public static class InputManager
 {
     private static KeyboardState _lastKey;

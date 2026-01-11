@@ -2,12 +2,17 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using Splitspace_Podziel_przestrzen.Managers;
+using Splitspace_Podziel_przestrzen.Globals;
+
 namespace Splitspace_Podziel_przestrzen;
 
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+
+    public static StateManager StateManager;
 
     public Game1()
     {
@@ -42,7 +47,7 @@ public class Game1 : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.Red);
 
         // TODO: Add your drawing code here
 
