@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Splitspace-Podziel_przestrzen")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e53de4ee559826a76037000a6938f43e26d5d65")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6a69e945f0e245467dc74e6f13b391f03d75ada6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Splitspace-Podziel_przestrzen")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Splitspace-Podziel_przestrzen")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
