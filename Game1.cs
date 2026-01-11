@@ -4,20 +4,20 @@ using Microsoft.Xna.Framework.Input;
 
 using Splitspace_Podziel_przestrzen.Managers;
 using Splitspace_Podziel_przestrzen.Globals;
+using Splitspace_Podziel_przestrzen.States;
 
 namespace Splitspace_Podziel_przestrzen;
 
 public class Game1 : Game
 {
 
-    public static StateManager StateManager;
 
     public Game1()
     {
         GlobalData.Graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        StateManager = new StateManager();
+        GlobalData.StateManager = new StateManager();
     }
 
     protected override void Initialize()
@@ -26,7 +26,6 @@ public class Game1 : Game
         GlobalData.Graphics.PreferredBackBufferWidth = 1280;
         GlobalData.Graphics.PreferredBackBufferHeight = 1024;
         GlobalData.Graphics.ApplyChanges(); 
-
 
         base.Initialize();
     }
@@ -41,15 +40,15 @@ public class Game1 : Game
         GlobalData.Content = Content;
 
         // Entry Point
-        StateManager.addState(new MainMenuState());
+        GlobalData.StateManager.addState(new MainMenuState());
     }
 
     protected override void Update(GameTime gameTime)
     {
         // TODO: Add your update logic here
-        StateManager.Update(gameTime);
+        GlobalData.StateManager.Update(gameTime);
 
-        if(StateManager.IsEmpty) Exit();
+        if(GlobalData.StateManager.IsEmpty) Exit();
 
         base.Update(gameTime);
 
@@ -64,7 +63,7 @@ public class Game1 : Game
 
             GlobalData.SpriteBatch.Begin();
 
-            StateManager.Draw();
+            GlobalData.StateManager.Draw();
 
             GlobalData.SpriteBatch.End();
         }
