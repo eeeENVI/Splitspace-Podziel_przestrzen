@@ -3,9 +3,6 @@ using Microsoft.Xna.Framework.Content;
 using System;
 using Splitspace_Podziel_przestrzen.Globals;
 
-// Base Class for Variety of States in App: MainMenu,Options,Game,Camera,Editor,Playground,Pause menu etc..
-// Simple for handling and seperating diffrent parts of application
-// Maybe in future we will need StateData class
 namespace Splitspace_Podziel_przestrzen.Models;
 public abstract class State
 {
@@ -16,7 +13,7 @@ public abstract class State
     { 
         quit = false; 
         Content = new ContentManager(GlobalData.Content.ServiceProvider,"Content");
-        Console.WriteLine("Starting State" + Game1.StateManager.Count.ToString());
+        Console.WriteLine("Starting State" + GlobalData.StateManager.Count.ToString());
     }
 
     public virtual void LoadContent(){}
@@ -28,7 +25,7 @@ public abstract class State
             Content.Unload(); 
             Content.Dispose(); 
             Content = null;
-            Console.WriteLine("Clearing State content" + (Game1.StateManager.Count-1).ToString());
+            Console.WriteLine("Clearing State content" + (GlobalData.StateManager.Count-1).ToString());
         }
     }
 
@@ -39,6 +36,6 @@ public abstract class State
     {
         UnloadContent();
 
-        Console.WriteLine("Ending State" + (Game1.StateManager.Count-1).ToString());
+        Console.WriteLine("Ending State" + (GlobalData.StateManager.Count-1).ToString());
     }
 }
