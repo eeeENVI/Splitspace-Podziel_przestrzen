@@ -36,6 +36,11 @@ namespace Splitspace_Podziel_przestrzen.Gui
             }
         }
 
+        public void UpdateTextPosition()
+        {
+            textPos = position + (resolution - font.MeasureString(text)) / 2;
+        }
+
         // No Texture pass
         public Button(Vector2 position, Vector2 resolution,
         SpriteFont font, string text, Color text_color,

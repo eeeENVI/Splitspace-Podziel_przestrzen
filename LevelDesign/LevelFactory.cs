@@ -12,32 +12,61 @@ public static class LevelFactory
     public static LevelData GenerateNextLevel(int levelNumber, Vector2 center)
     {
         // 1. Określamy liczbę fragmentów (N)
-        // Poziomy 0-2: N=2, Poziomy 3-5: N=3, itd.
         int fragmentCount = 2 + (levelNumber / 20); 
         
         // 2. Obliczamy stopień skomplikowania wierzchołków
-        int minVertices = 3 + (levelNumber / 2);
-        int maxVertices = 6 + levelNumber;
+        int minVertices = 3 + (levelNumber / 10);
+        int maxVertices = 6 + (levelNumber / 5);
         int vertexCount = _rng.Next(minVertices, maxVertices + 1);
 
         // 3. Generujemy kształt (na środku ekranu)
         Shape2D shape;
         float radius = 300f;
 
-        if (levelNumber > 0 && levelNumber % 3 == 0) // Częściej dajemy gwiazdy dla N > 2
+       Random rnd = new Random();
+
+        if (levelNumber <= 5)
         {
-            shape = CreateStarPolygon(center, radius, vertexCount);
+            // Poziomy 1-5: Tylko figury wypukłe (nauka podstaw)
+            shape = ShapeFactory.CreateRandomConvexPolygon(center, radius, vertexCount);
         }
         else
         {
-            shape = ShapeFactory.CreateRandomConvexPolygon(center, radius, vertexCount);
+            // Poziom 6+: Losowanie z całej puli
+            int roll = rnd.Next(100); 
+
+            if (roll < 5)
+            {
+                shape = ShapeFactory.CreateMutantShape(center, 180);
+            }
+            else if (roll < 15)
+            {
+                shape = ShapeFactory.CreateCrazyBlockShape(center, 250); 
+            }
+            else if (roll < 25) 
+            {
+                shape = ShapeFactory.CreateLShape(center, radius * 1.5f);
+            }
+            else if (roll < 50) // ziemniak hehe
+            {
+                shape = ShapeFactory.CreateIrregularShape(center, radius, vertexCount);
+            }
+            else if (roll < 75) 
+            {
+                float innerRatio = (float)(rnd.NextDouble() * 0.4 + 0.3); 
+                shape = ShapeFactory.CreateAdvancedStar(center, radius, rnd.Next(5, 9), innerRatio);
+            }
+            else 
+            {
+                shape = ShapeFactory.CreateRandomConvexPolygon(center, radius, vertexCount);
+            }
         }
 
         // 4. Generujemy N celów, których suma to 100
         List<float> targets = GenerateRandomTargets(fragmentCount);
 
         // 5. Tolerancja maleje z czasem
-        float tolerance = Math.Max(0.3f, 5.0f - (levelNumber * 0.1f));
+        float tolerance = Math.Max(0.3f, 10.0f - (levelNumber * 0.1f));
 
         return new LevelData
         {
@@ -74,16 +103,5 @@ public static class LevelFactory
         return targets.Select(t => (float)Math.Round(t)).ToList();
     }
 
-    private static Shape2D CreateStarPolygon(Vector2 center, float radius, int points)
-    {
-        List<Vector2> vertices = new List<Vector2>();
-        float angleStep = MathHelper.TwoPi / (points * 2);
-        for (int i = 0; i < points * 2; i++)
-        {
-            float r = (i % 2 == 0) ? radius : radius * 0.5f;
-            float angle = i * angleStep;
-            vertices.Add(new Vector2(center.X + (float)Math.Cos(angle) * r, center.Y + (float)Math.Sin(angle) * r));
-        }
-        return new Shape2D(vertices, new Color(159, 227, 255));
-    }
+    
 }

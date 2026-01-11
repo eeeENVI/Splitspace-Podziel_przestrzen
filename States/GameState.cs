@@ -12,12 +12,7 @@ using Splitspace_Podziel_przestrzen.Core;
 using Splitspace_Podziel_przestrzen.LevelDesign;
 using Splitspace_Podziel_przestrzen;
 using Splitspace_Podziel_przestrzen.Stats;
-using System.Net.Quic;
-using System.Data.SqlTypes;
-using System.Security;
-
-//using System.Security.Cryptography; skad tutajto robi XD
-
+using System.ComponentModel;
 
 namespace Splitspace_Podziel_przestrzen.States;
 public class GameState : State
@@ -37,6 +32,7 @@ public class GameState : State
     ///  Timer + Stats
     /// </summary>
     private float _levelTimer = 0f; 
+    private int _numTakes = 1;
     private bool _pause = false;
 
     /// <summary>
@@ -46,6 +42,13 @@ public class GameState : State
     private Vector2 _containerCenter; 
     private bool _debugMode = true; 
     private bool _showGrid = false;
+
+    /// <summary>
+    /// UI overlay
+    /// </summary>
+    private bool _showLevelSummary = false;
+    private Rectangle _summaryBox;
+    private ScoreResult _lastScore;
 
     public GameState()
     {
@@ -57,6 +60,7 @@ public class GameState : State
         font = Content.Load<SpriteFont>("Fonts/testFont");
 
         _gameContainer = new Rectangle(190, 162, 900, 700); 
+        _summaryBox = new Rectangle(490, 362, 300, 300);
     
         _containerCenter = new Vector2(
         _gameContainer.X + _gameContainer.Width / 2f,
@@ -92,9 +96,16 @@ public class GameState : State
         List<Shape2D> resultParts = new List<Shape2D>();
         bool anyShapeSplit = false;
 
+       Matrix transform = Matrix.CreateTranslation(new Vector3(-_containerCenter, 0)) * Matrix.CreateRotationZ(_rotation) * Matrix.CreateTranslation(new Vector3(_containerCenter, 0));
+        
+        Matrix invertTransform = Matrix.Invert(transform);
+
+        Vector2 localStart = Vector2.Transform(start, invertTransform);
+        Vector2 localEnd = Vector2.Transform(end, invertTransform);
+
         foreach (var shape in _shapes)
         {
-            var splitResult = shape.Split(start, end);
+            var splitResult = shape.Split(localStart, localEnd);
             if (splitResult.Count > 1) anyShapeSplit = true;
             resultParts.AddRange(splitResult);
         }
@@ -127,13 +138,15 @@ public class GameState : State
                 GlobalData.GlobalStats.TotalLevelsCompleted++;
 
                 // 2. Zapisujemy
+                _lastScore = score;
+                _showLevelSummary = true; // To zablokuje Update gry i pokaże okno
                 
                 StatsService.Save(GlobalData.GlobalStats);
 
                 Console.WriteLine($"Poziom zaliczony! Celność: {score.Accuracy}%");
 
-                _levelCounter++;
-                LoadLevel(_levelCounter);
+                //_levelCounter++;
+                //LoadLevel(_levelCounter);
             }
             else
             {
@@ -147,7 +160,7 @@ public class GameState : State
                     );
 
                     StatsService.Save(GlobalData.GlobalStats);
-
+                    _numTakes++;
                     Console.WriteLine("Limit ciec osiagniety, a cel nie zostal spelniony. Reset!");
                     LoadLevel(_levelCounter);
                 }
@@ -158,6 +171,25 @@ public class GameState : State
     public override void Update(GameTime gameTime)
     {
         InputManager.Update();
+
+        var kState = Keyboard.GetState();
+
+        if (_showLevelSummary)
+        {
+            if (kState.IsKeyDown(Keys.Enter))
+            {
+                _showLevelSummary = false;
+                _levelTimer = 0;
+                _levelCounter++;
+                _numTakes = 1;
+                LoadLevel(_levelCounter);
+            }
+            if (kState.IsKeyDown(Keys.Escape))
+            {
+                quit = true;
+            }
+            return; // WAŻNE: Nie pozwalamy na dalszą logikę gry, gdy okno jest otwarte
+        }
 
         if(!_pause) _levelTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
        
@@ -242,6 +274,11 @@ public class GameState : State
 
         DrawGrid(sb);
 
+        sb.End();
+        Matrix transform = Matrix.CreateTranslation(new Vector3(-_containerCenter, 0)) * Matrix.CreateRotationZ(_rotation) * Matrix.CreateTranslation(new Vector3(_containerCenter, 0));
+
+        sb.Begin(transformMatrix: transform); 
+
         foreach (var shape in _shapes)
         {
             ShapeRenderer.DrawShape(sb, shape, _debugMode);
@@ -258,6 +295,8 @@ public class GameState : State
                 sb.DrawString(font, label, shape.GetCentroid() - (labelSize / 2), Color.White);
             }
         }
+        sb.End();
+        sb.Begin();
 
         // Rysowanie aktualnej linii cięcia
         if (_cutStart != null)
@@ -266,6 +305,7 @@ public class GameState : State
             ShapeRenderer.DrawLine(sb, _cutStart.Value, new Vector2(mouse.X, mouse.Y), Color.White * 0.5f, 1);
         }
 
+        
         // info
         string levelInfo = $"POZIOM: {_levelCounter}";
         string goalInfo = "CELE: " + string.Join("% | ", _currentLevelData.TargetPercentages) + "%";
@@ -276,6 +316,25 @@ public class GameState : State
         sb.DrawString(font, levelInfo, new Vector2(50, 50), Color.White);
         sb.DrawString(font, goalInfo + toleranceInfo, new Vector2(500, 50), Color.Gold);
         sb.DrawString(font, cutsInfo, new Vector2(20, 70), remainingCuts > 0 ? Color.White : Color.Red);
+
+
+        if (_showLevelSummary)
+        {
+            ShapeRenderer.DrawOutline(sb, new Rectangle(0,0,1280,1024), 1024, Color.Black * 0.5f);
+
+            ShapeRenderer.DrawOutline(sb, _summaryBox, _summaryBox.Height, new Color(30, 30, 40));
+            ShapeRenderer.DrawOutline(sb, _summaryBox, 2, Color.Gold);
+
+            string msg = "POZIOM UKONCZONY!";
+            string acc = $"Celnosc: {_lastScore.Accuracy:F1}%";
+            string ntakes = $"\nProba nr: {_numTakes}";
+            string prompt = "[Enter] Dalej \n [Esc] Menu";
+
+            sb.DrawString(font, msg, new Vector2(640 - font.MeasureString(msg).X/2, _summaryBox.Y + 40), Color.Gold);
+            sb.DrawString(font, acc, new Vector2(640 - font.MeasureString(acc).X/2, _summaryBox.Y + 110), Color.White);
+            sb.DrawString(font, ntakes, new Vector2(640 - font.MeasureString(acc).X/2, _summaryBox.Y + 110), Color.White);
+            sb.DrawString(font, prompt, new Vector2(640 - font.MeasureString(prompt).X/2, _summaryBox.Y + 220), Color.Cyan * 0.8f);
+        }
     }
 
 

@@ -7,6 +7,7 @@ using Splitspace_Podziel_przestrzen.Managers;
 using Splitspace_Podziel_przestrzen.Models;
 using Splitspace_Podziel_przestrzen.Gui;
 using Splitspace_Podziel_przestrzen.Globals;
+using Splitspace_Podziel_przestrzen.Core;
 using Splitspace_Podziel_przestrzen;
 
 namespace Splitspace_Podziel_przestrzen.States;
@@ -94,6 +95,19 @@ public class MainMenuState : State
 
     public override void Draw()
     {
+        var sb = GlobalData.SpriteBatch;
+
+        ShapeRenderer.DrawOutline(sb, new Rectangle(0, 0, 1280, 1024), 1024, new Color(10, 10, 15));
+        ShapeRenderer.DrawLine(sb, new Vector2(0, 300), new Vector2(1280, 700), Color.Cyan * 0.2f, 2);
+
+        string title = "SplitSpace";
+        Vector2 titlePos = new Vector2(640, 150);
+        Vector2 origin = font.MeasureString(title) / 2;
+
+        sb.DrawString(font, title, titlePos + new Vector2(4, 4), Color.Purple * 0.5f, 0, origin, 1.2f, SpriteEffects.None, 0);
+        
+        sb.DrawString(font, title, titlePos, Color.Cyan, 0, origin, 1.2f, SpriteEffects.None, 0);
+
         btn_graj.Draw();   
         btn_statystyki.Draw();  
         btn_wyjdz.Draw();    
