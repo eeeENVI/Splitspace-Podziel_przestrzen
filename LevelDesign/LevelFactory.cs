@@ -12,7 +12,7 @@ public static class LevelFactory
     public static LevelData GenerateNextLevel(int levelNumber, Vector2 center)
     {
         // 1. Określamy liczbę fragmentów (N)
-        int fragmentCount = 2 + (levelNumber / 20); 
+        int fragmentCount = 2 + (levelNumber / 25); 
         
         // 2. Obliczamy stopień skomplikowania wierzchołków
         int minVertices = 3 + (levelNumber / 10);

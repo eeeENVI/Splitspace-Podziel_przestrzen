@@ -23,6 +23,8 @@ public class LevelSelectState : State
     private int _maxScroll;
     private int _lastScrollValue;
 
+    int highestLevel, levelsToGenerate;
+
     // Parametry siatki
     private const int Cols = 5;
     private const int BtnSize = 100;
@@ -40,8 +42,25 @@ public class LevelSelectState : State
         _scrollContainer = new Rectangle(340, 200, 600, 600);
         _lastScrollValue = Mouse.GetState().ScrollWheelValue;
 
-        int highestLevel = GlobalData.GlobalStats.HighestLevelReached;
-        int levelsToGenerate = highestLevel;
+        highestLevel = GlobalData.GlobalStats.HighestLevelReached;
+        levelsToGenerate = highestLevel;
+
+
+        refreshButtons();
+
+        // Obliczamy zasięg scrolla
+        int rows = (int)Math.Ceiling((double)levelsToGenerate / Cols);
+        int totalHeight = rows * (BtnSize + Padding) + Padding;
+        _maxScroll = Math.Max(0, totalHeight - _scrollContainer.Height);
+    }
+
+    private void refreshButtons()
+    {
+        _levelButtons.Clear();
+
+        highestLevel = GlobalData.GlobalStats.HighestLevelReached;
+        levelsToGenerate = highestLevel;
+        if(levelsToGenerate == 0) levelsToGenerate = 1;
 
         // Paleta kolorów
         Color offWhite   = new Color(255, 231, 231); 
@@ -53,29 +72,28 @@ public class LevelSelectState : State
 
         for (int i = 1; i <= levelsToGenerate; i++)
         {
+            Color currentColor = (i == levelsToGenerate) ? softRed : mintGreen;
+
             var btn = new Button(
 
                 Vector2.Zero, 
                 new Vector2(BtnSize, BtnSize),
                 font, i.ToString(),
                 darkSlate,       
-                mintGreen,   
+                currentColor,   
                 skyBlue,     
                 gold         
             );
             _levelButtons.Add(btn);
         }
-
-        // Obliczamy zasięg scrolla
-        int rows = (int)Math.Ceiling((double)levelsToGenerate / Cols);
-        int totalHeight = rows * (BtnSize + Padding) + Padding;
-        _maxScroll = Math.Max(0, totalHeight - _scrollContainer.Height);
     }
 
     public override void Update(GameTime gameTime)
     {
         InputManager.Update();
         if(InputManager.WasKeyTriggered(Keys.Escape)) quit = true;
+
+        if(GlobalData.GlobalStats.HighestLevelReached > _levelButtons.Count) refreshButtons();
 
         var mState = Mouse.GetState();
         
@@ -108,7 +126,7 @@ public class LevelSelectState : State
 
             if (_levelButtons[i].Clicked())
             {
-                // Przekazujemy i-ty poziom do gry
+                GlobalData.StateManager.addState(new GameState(i+1));
             }
         }
     }
@@ -137,5 +155,8 @@ public class LevelSelectState : State
         sb.End();
         sb.Begin(); // Powrót do normalnego trybu
         ShapeRenderer.DrawOutline(sb, _scrollContainer, 3, Color.Gold * 0.5f);
+        // Stopka
+        string footer = "[ESC] Powrot do menu";
+        sb.DrawString(font, footer, new Vector2(640 - font.MeasureString(footer).X / 2, 920), Color.DarkGray);
     }
 }

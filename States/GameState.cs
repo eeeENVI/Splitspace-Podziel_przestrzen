@@ -12,7 +12,6 @@ using Splitspace_Podziel_przestrzen.Core;
 using Splitspace_Podziel_przestrzen.LevelDesign;
 using Splitspace_Podziel_przestrzen;
 using Splitspace_Podziel_przestrzen.Stats;
-using System.ComponentModel;
 
 namespace Splitspace_Podziel_przestrzen.States;
 public class GameState : State
@@ -40,7 +39,7 @@ public class GameState : State
     /// </summary>
     private Rectangle _gameContainer;
     private Vector2 _containerCenter; 
-    private bool _debugMode = true; 
+    private bool _debugMode = false; 
     private bool _showGrid = false;
 
     /// <summary>
@@ -50,8 +49,9 @@ public class GameState : State
     private Rectangle _summaryBox;
     private ScoreResult _lastScore;
 
-    public GameState()
+    public GameState(int level = 0)
     {
+        _levelCounter=level;
         LoadContent();
     }
 
@@ -172,6 +172,18 @@ public class GameState : State
     {
         InputManager.Update();
 
+        // Przelaczenie pauzy klawiszem P
+        if(InputManager.WasKeyTriggered(Keys.Escape)) 
+        {
+            quit=true;
+        }
+
+        // Przelaczenie pauzy klawiszem P
+        if(InputManager.WasKeyTriggered(Keys.P)) 
+        {
+            _pause = !_pause;
+        }
+        
         var kState = Keyboard.GetState();
 
         if (_showLevelSummary)
@@ -190,6 +202,7 @@ public class GameState : State
             }
             return; // WAŻNE: Nie pozwalamy na dalszą logikę gry, gdy okno jest otwarte
         }
+        else if(_pause) return;
 
         if(!_showLevelSummary && !_pause) _levelTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
        
@@ -198,13 +211,7 @@ public class GameState : State
         if (InputManager.IsKeyPressed(Keys.Left)) _rotation -= rotationSpeed;
         if (InputManager.IsKeyPressed(Keys.Right)) _rotation += rotationSpeed;
 
-        // Przelaczenie pauzy klawiszem Escape
-        if(InputManager.WasKeyTriggered(Keys.Escape)) 
-        {
-            _pause = !_pause;
-            quit = true;
-        }
-
+       
         // Przełączanie trybu debug klawiszem F3
         if (InputManager.WasKeyTriggered(Keys.F3))
         {
@@ -306,6 +313,7 @@ public class GameState : State
         }
 
         // info
+        string helpInfo = "Debug - F3\nGrid - G\nRotacja - Lewo|Prawo\nPauza - P";
         string levelInfo = $"POZIOM: {_levelCounter}";
         string goalInfo = "CELE: " + string.Join("% | ", _currentLevelData.TargetPercentages) + "%";
         string toleranceInfo = $" (Tolerancja: {_currentLevelData.Tolerance}%)";
@@ -313,8 +321,10 @@ public class GameState : State
         string cutsInfo = $"Pozostale ciecia: {remainingCuts}";
         string timeInfo = $"CZAS: {_levelTimer:F1}s";
         Vector2 statsSize = font.MeasureString(timeInfo);
-        sb.DrawString(font, timeInfo, new Vector2(640 - statsSize.X / 2, 90f), Color.Green * 0.9f);
+        Vector2 helpsSize = font.MeasureString(helpInfo);
 
+        sb.DrawString(font, helpInfo, new Vector2(1230 - helpsSize.X, 50), Color.White);
+        sb.DrawString(font, timeInfo, new Vector2(640 - statsSize.X / 2, 90f), Color.Green * 0.9f);
         sb.DrawString(font, levelInfo, new Vector2(50, 50), Color.White);
         sb.DrawString(font, goalInfo + toleranceInfo, new Vector2(500, 50), Color.Gold);
         sb.DrawString(font, cutsInfo, new Vector2(20, 70), remainingCuts > 0 ? Color.White : Color.Red);
