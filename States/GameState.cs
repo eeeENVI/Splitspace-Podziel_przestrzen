@@ -22,7 +22,7 @@ public class GameState : State
     private bool _debugMode = true; 
 
     private LevelData _currentLevelData;
-    private int _levelCounter = 5;
+    private int _levelCounter = 1;
 
     private float _totalInitialArea;
     private float _targetPercentage = 50f; // podziel na pół
@@ -55,8 +55,7 @@ public class GameState : State
 
     private void OnSplit(Vector2 start, Vector2 end)
     {
-        // Zabezpieczenie przed kliknięciem w miejscu
-        if (Vector2.Distance(start, end) < 10f) return;
+        if (Vector2.Distance(start, end) < 20f) return;
 
         List<Shape2D> resultParts = new List<Shape2D>();
         foreach (var shape in _shapes)
@@ -64,7 +63,6 @@ public class GameState : State
             resultParts.AddRange(shape.Split(start, end));
         }
 
-        // Sprawdzamy, czy cokolwiek zostało przecięte
         if (resultParts.Count > _shapes.Count)
         {
             var score = LevelJudge.EvaluateSplit(
@@ -74,14 +72,12 @@ public class GameState : State
                 _currentLevelData.Tolerance
             );
 
+            _shapes = resultParts; // Zawsze aktualizujemy kształty, by widzieć pocięte kawałki
+
             if (score.IsPassed)
             {
                 _levelCounter++;
                 LoadLevel(_levelCounter);
-            }
-            else
-            {
-                _shapes = resultParts;
             }
         }
     }
@@ -120,12 +116,14 @@ public class GameState : State
         {
             ShapeRenderer.DrawShape(GlobalData.SpriteBatch, shape, _debugMode);
             
+
             // Obliczanie i rysowanie % powierzchni każdego kawałka
             float currentArea = shape.CalculateArea();
             float perc = (currentArea / _totalInitialArea) * 100f;
             
             if(_debugMode) 
             {
+                ShapeRenderer.DrawShapeFilled(GlobalData.SpriteBatch, shape);
                 string label = $"{Math.Round(perc, 1)}%";
                 Vector2 labelSize = font.MeasureString(label);
                 GlobalData.SpriteBatch.DrawString(font, label, shape.GetCentroid() - (labelSize / 2), Color.White);
@@ -142,7 +140,7 @@ public class GameState : State
         // info
         string levelInfo = $"POZIOM: {_levelCounter}";
         string goalInfo = $"CEL: {_targetPercentage}% / {100 - _targetPercentage}%";
-        string toleranceInfo = _debugMode ? $" (Tolerancja: {_currentLevelData.Tolerance}%)" : "";
+        string toleranceInfo = $" (Tolerancja: {_currentLevelData.Tolerance}%)";
 
         GlobalData.SpriteBatch.DrawString(font, levelInfo, new Vector2(50, 50), Color.White);
         GlobalData.SpriteBatch.DrawString(font, goalInfo + toleranceInfo, new Vector2(500, 50), Color.Gold);

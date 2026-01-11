@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Splitspace_Podziel_przestrzen.Core;
 
@@ -8,7 +9,6 @@ public static class ShapeRenderer
 {
     private static Texture2D _pixel;
 
-    // Inicjalizacja tekstury
     private static void CreatePixel(GraphicsDevice graphicsDevice)
     {
         if (_pixel == null)
@@ -22,34 +22,54 @@ public static class ShapeRenderer
     {
         CreatePixel(spriteBatch.GraphicsDevice);
 
-        var vertices = shape.Vertices;
-        for (int i = 0; i < vertices.Count; i++)
+        // Zbieramy wszystkie krawędzie ze wszystkich trójkątów
+        var edges = new List<(Vector2 p1, Vector2 p2)>();
+        foreach (var tri in shape.Triangles)
         {
-            Vector2 start = vertices[i];
-            Vector2 end = vertices[(i + 1) % vertices.Count];
+            edges.Add(NormalizeEdge(tri[0], tri[1]));
+            edges.Add(NormalizeEdge(tri[1], tri[2]));
+            edges.Add(NormalizeEdge(tri[2], tri[0]));
+        }
 
-            // Rysowanie krawędzi
-            DrawLine(spriteBatch, start, end, shape.Color, 2);
+        // Krawędź zewnętrzna to taka, która występuje w liście tylko RAZ
+        var boundaryEdges = edges
+            .GroupBy(e => e)
+            .Where(g => g.Count() == 1)
+            .Select(g => g.Key);
 
-            // Tryb Debug: Rysowanie kropek w miejscach wierzchołków
-            if (debugMode)
+        foreach (var edge in boundaryEdges)
+        {
+            DrawLine(spriteBatch, edge.p1, edge.p2, shape.Color, 2);
+        }
+
+        if (debugMode)
+        {
+            foreach (var tri in shape.Triangles)
             {
-                spriteBatch.Draw(_pixel, new Rectangle((int)start.X - 3, (int)start.Y - 3, 6, 6), Color.Red);
+                foreach (var v in tri)
+                {
+                    spriteBatch.Draw(_pixel, new Rectangle((int)v.X - 3, (int)v.Y - 3, 6, 6), Color.Red);
+                }
+                
+                // Rysujemy siatkę trójkątów
+                DrawLine(spriteBatch, tri[0], tri[1], Color.White * 0.2f, 1);
+                DrawLine(spriteBatch, tri[1], tri[2], Color.White * 0.2f, 1);
+                DrawLine(spriteBatch, tri[2], tri[0], Color.White * 0.2f, 1);
             }
         }
     }
 
+    // funkcja do wypełnienia
     public static void DrawShapeFilled(SpriteBatch spriteBatch, Shape2D shape)
     {
         CreatePixel(spriteBatch.GraphicsDevice);
-        var triangles = shape.GetTriangles();
-
-        foreach (var tri in triangles)
+        
+        foreach (var tri in shape.Triangles)
         {
-            // przypomnienie dla mnie bym basiceffect w mono ogarnal
-            DrawLine(spriteBatch, tri[0], tri[1], shape.Color * 0.5f, 1);
-            DrawLine(spriteBatch, tri[1], tri[2], shape.Color * 0.5f, 1);
-            DrawLine(spriteBatch, tri[2], tri[0], shape.Color * 0.5f, 1);
+            // mono basiceffect sprawdz 
+            DrawLine(spriteBatch, tri[0], tri[1], shape.Color * 0.3f, 1);
+            DrawLine(spriteBatch, tri[1], tri[2], shape.Color * 0.3f, 1);
+            DrawLine(spriteBatch, tri[2], tri[0], shape.Color * 0.3f, 1);
         }
     }
 
@@ -65,8 +85,15 @@ public static class ShapeRenderer
             null,
             color,
             angle,
-            new Vector2(0, 0),
+            Vector2.Zero,
             SpriteEffects.None,
             0);
+    }
+
+    private static (Vector2, Vector2) NormalizeEdge(Vector2 v1, Vector2 v2)
+    {
+        if (v1.X < v2.X || (v1.X == v2.X && v1.Y < v2.Y))
+            return (v1, v2);
+        return (v2, v1);
     }
 }
