@@ -46,6 +46,15 @@ public static class InputManager
         return _currentKey.IsKeyDown(key);
     }
 
+    public static bool MouseLeftTriggered() 
+    {
+        return MouseState.LeftButton == ButtonState.Pressed && LastMouseState.LeftButton == ButtonState.Released;
+    }
+
+    public static bool MouseLeftReleased() 
+    {
+        return MouseState.LeftButton == ButtonState.Released && LastMouseState.LeftButton == ButtonState.Pressed;
+    }
 
     public static void Update()
     {
