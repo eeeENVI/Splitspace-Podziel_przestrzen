@@ -23,8 +23,8 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
-        GlobalData.Graphics.PreferredBackBufferWidth = 1600;
-        GlobalData.Graphics.PreferredBackBufferHeight = 900;
+        GlobalData.Graphics.PreferredBackBufferWidth = 1280;
+        GlobalData.Graphics.PreferredBackBufferHeight = 1024;
         GlobalData.Graphics.ApplyChanges(); 
 
 
