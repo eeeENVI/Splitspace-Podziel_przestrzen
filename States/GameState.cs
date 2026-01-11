@@ -191,7 +191,7 @@ public class GameState : State
             return; // WAŻNE: Nie pozwalamy na dalszą logikę gry, gdy okno jest otwarte
         }
 
-        if(!_pause) _levelTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if(!_showLevelSummary && !_pause) _levelTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
        
         // Sterowanie rotacja figury - do dokonczenia ( macierz transformacji)
         float rotationSpeed = 1.5f * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -305,13 +305,15 @@ public class GameState : State
             ShapeRenderer.DrawLine(sb, _cutStart.Value, new Vector2(mouse.X, mouse.Y), Color.White * 0.5f, 1);
         }
 
-        
         // info
         string levelInfo = $"POZIOM: {_levelCounter}";
         string goalInfo = "CELE: " + string.Join("% | ", _currentLevelData.TargetPercentages) + "%";
         string toleranceInfo = $" (Tolerancja: {_currentLevelData.Tolerance}%)";
         int remainingCuts = _currentLevelData.MaxCuts - _cutsPerformed;
         string cutsInfo = $"Pozostale ciecia: {remainingCuts}";
+        string timeInfo = $"CZAS: {_levelTimer:F1}s";
+        Vector2 statsSize = font.MeasureString(timeInfo);
+        sb.DrawString(font, timeInfo, new Vector2(640 - statsSize.X / 2, 90f), Color.Green * 0.9f);
 
         sb.DrawString(font, levelInfo, new Vector2(50, 50), Color.White);
         sb.DrawString(font, goalInfo + toleranceInfo, new Vector2(500, 50), Color.Gold);
