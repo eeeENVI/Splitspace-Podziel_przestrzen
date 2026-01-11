@@ -15,11 +15,7 @@ public abstract class State
     public State() 
     { 
         quit = false; 
-        // If we can use our own ServiceProvider then we could COMPLETELY eliminate Globals.Content !
-        // We should try that
         Content = new ContentManager(GlobalData.Content.ServiceProvider,"Content");
-
-        LoadContent();
         Console.WriteLine("Starting State" + Game1.StateManager.Count.ToString());
     }
 

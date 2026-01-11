@@ -9,47 +9,65 @@ namespace Splitspace_Podziel_przestrzen;
 
 public class Game1 : Game
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
 
     public static StateManager StateManager;
 
     public Game1()
     {
-        _graphics = new GraphicsDeviceManager(this);
+        GlobalData.Graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+        StateManager = new StateManager();
     }
 
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        GlobalData.Graphics.PreferredBackBufferWidth = 1600;
+        GlobalData.Graphics.PreferredBackBufferHeight = 900;
+        GlobalData.Graphics.ApplyChanges(); 
+
 
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-
         // TODO: use this.Content to load your game content here
+        GlobalData.GraphicsDevice = GraphicsDevice;
+
+        GlobalData.SpriteBatch = new SpriteBatch(GlobalData.GraphicsDevice);
+
+        GlobalData.Content = Content;
+
+        // Entry Point
+        StateManager.addState(new MainMenuState());
     }
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         // TODO: Add your update logic here
+        StateManager.Update(gameTime);
+
+        if(StateManager.IsEmpty) Exit();
 
         base.Update(gameTime);
+
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.Red);
-
         // TODO: Add your drawing code here
+        if(IsActive)
+        {
+            GlobalData.Graphics.GraphicsDevice.Clear(Color.Black);
+
+            GlobalData.SpriteBatch.Begin();
+
+            StateManager.Draw();
+
+            GlobalData.SpriteBatch.End();
+        }
 
         base.Draw(gameTime);
     }

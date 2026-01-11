@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>D:/Work/Git/Splitspace-Podziel_przestrzen/Content/Fonts/testFont.spritefont</SourceFile>
+  <SourceTime>2024-03-10T13:14:26.3888212+01:00</SourceTime>
+  <DestFile>D:/Work/Git/Splitspace-Podziel_przestrzen/Content/bin/DesktopGL/Content/Fonts/testFont.xnb</DestFile>
+  <DestTime>2026-01-11T11:05:32.9555346+01:00</DestTime>
+  <Importer>FontDescriptionImporter</Importer>
+  <ImporterTime>2025-10-20T16:25:32+02:00</ImporterTime>
+  <Processor>FontDescriptionProcessor</Processor>
+  <ProcessorTime>2025-10-20T16:25:32+02:00</ProcessorTime>
+  <Parameters>
+    <Key>PremultiplyAlpha</Key>
+    <Value>True</Value>
+  </Parameters>
+  <Parameters>
+    <Key>TextureFormat</Key>
+    <Value>Compressed</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

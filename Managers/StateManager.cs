@@ -38,7 +38,6 @@ public class StateManager
             
             if(getCurrentState().quit)
             {
-                //dispose of State data inside End maybe add destructor later
                 getCurrentState().End();
                 removeState();
             }

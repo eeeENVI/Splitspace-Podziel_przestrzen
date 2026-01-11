@@ -128,10 +128,10 @@ namespace Splitspace_Podziel_przestrzen.Gui
 
         public void Draw()
         {
-            GlobalData.SpriteBatch.Begin();
+           // GlobalData.SpriteBatch.Begin();
             GlobalData.SpriteBatch.Draw(texture,rect,mask_color);
             GlobalData.SpriteBatch.DrawString(font,text,textPos,text_color);
-            GlobalData.SpriteBatch.End();
+            //GlobalData.SpriteBatch.End();
         }
     }
 }

@@ -32,3 +32,4 @@ D:\Work\Git\Splitspace-Podziel_przestrzen\obj\Debug\net9.0\refint\Splitspace-Pod
 D:\Work\Git\Splitspace-Podziel_przestrzen\obj\Debug\net9.0\Splitspace-Podziel_przestrzen.pdb
 D:\Work\Git\Splitspace-Podziel_przestrzen\obj\Debug\net9.0\Splitspace-Podziel_przestrzen.genruntimeconfig.cache
 D:\Work\Git\Splitspace-Podziel_przestrzen\obj\Debug\net9.0\ref\Splitspace-Podziel_przestrzen.dll
+D:\Work\Git\Splitspace-Podziel_przestrzen\bin\Debug\net9.0\Content\Fonts\testFont.xnb
